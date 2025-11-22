@@ -5,19 +5,22 @@ import { emitMessageUpdated, emitMessageDeleted } from "../sockets/socket.utils"
 // crear un nuevo mensaje
 export const crearMensaje = async (dto: CreateMessageDto, senderId: number) => {
     try {
-        // verificar que el usuario sea participante del chat
-        const participante = await prisma.chatParticipant.findFirst({
-            where: {
-                chatId: dto.chatId,
-                userId: senderId
-            }
-        });
+        // Si es el chat global (ID 1), permitir a todos
+        // Para otros chats, verificar que sea participante
+        if (dto.chatId !== 1) {
+            const participante = await prisma.chatParticipant.findFirst({
+                where: {
+                    chatId: dto.chatId,
+                    userId: senderId
+                }
+            });
 
-        if (!participante) {
-            return {
-                message: "no perteneces a este chat",
-                status: 403
-            };
+            if (!participante) {
+                return {
+                    message: "no perteneces a este chat",
+                    status: 403
+                };
+            }
         }
 
         const mensaje = await prisma.message.create({
@@ -37,10 +40,20 @@ export const crearMensaje = async (dto: CreateMessageDto, senderId: number) => {
             }
         });
 
+        // Transformar la estructura para que sea consistente con el frontend
+        const messageFormatted = {
+            id: mensaje.id,
+            content: mensaje.content,
+            userId: mensaje.senderId,
+            username: mensaje.sender.username,
+            chatId: mensaje.chatId,
+            createdAt: mensaje.createdAt
+        };
+
         return {
             message: "mensaje enviado exitosamente",
             status: 201,
-            data: mensaje
+            data: messageFormatted
         };
     } catch (error) {
         console.log("error en crearMensaje:", error);
@@ -54,19 +67,22 @@ export const crearMensaje = async (dto: CreateMessageDto, senderId: number) => {
 // obtener mensajes de un chat
 export const obtenerMensajesDelChat = async (chatId: number, userId: number) => {
     try {
-        // verificar que el usuario sea participante del chat
-        const participante = await prisma.chatParticipant.findFirst({
-            where: {
-                chatId: chatId,
-                userId: userId
-            }
-        });
+        // Si es el chat global (ID 1), permitir acceso a todos
+        // Para otros chats, verificar que sea participante
+        if (chatId !== 1) {
+            const participante = await prisma.chatParticipant.findFirst({
+                where: {
+                    chatId: chatId,
+                    userId: userId
+                }
+            });
 
-        if (!participante) {
-            return {
-                message: "no tienes acceso a este chat",
-                status: 403
-            };
+            if (!participante) {
+                return {
+                    message: "no tienes acceso a este chat",
+                    status: 403
+                };
+            }
         }
 
         const mensajes = await prisma.message.findMany({
@@ -86,10 +102,20 @@ export const obtenerMensajesDelChat = async (chatId: number, userId: number) => 
             }
         });
 
+        // Transformar la estructura para que sea consistente con el frontend
+        const mensajesFormateados = mensajes.map(msg => ({
+            id: msg.id,
+            content: msg.content,
+            userId: msg.senderId,
+            username: msg.sender.username,
+            chatId: msg.chatId,
+            createdAt: msg.createdAt
+        }));
+
         return {
             message: "mensajes obtenidos exitosamente",
             status: 200,
-            data: mensajes
+            data: mensajesFormateados
         };
     } catch (error) {
         console.log("error en obtenerMensajesDelChat:", error);
