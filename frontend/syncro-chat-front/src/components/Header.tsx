@@ -1,7 +1,6 @@
 import type { IUser } from "../types/user";
 
 export function Header({ user, onLogin, onLogout }: { user: IUser | null; onLogin?: () => void; onLogout?: () => void }) {
-    // onLogin / onLogout son opcionales: el componente los llamará si se pasan desde el padre
     return (
         <header className="fixed top-0 left-0 w-full z-50 backdrop-blur-md shadow-xs h-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
