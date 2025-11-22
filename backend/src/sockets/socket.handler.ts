@@ -35,6 +35,12 @@ export const configurarSocketIO = (io: Server) => {
     io.on("connection", (socket: SocketWithUser) => {
         console.log(`usuario conectado: ${socket.username} (${socket.userId})`);
 
+        // Emitir a todos que un usuario se conectó (para el chat global)
+        socket.broadcast.emit("user_connected", {
+            username: socket.username,
+            userId: socket.userId
+        });
+
         // unirse a un chat
         socket.on("join_chat", async (chatId: number) => {
             try {
@@ -177,6 +183,12 @@ export const configurarSocketIO = (io: Server) => {
         // desconexion
         socket.on("disconnect", () => {
             console.log(`usuario desconectado: ${socket.username} (${socket.userId})`);
+            
+            // Emitir a todos que un usuario se desconectó
+            socket.broadcast.emit("user_disconnected", {
+                username: socket.username,
+                userId: socket.userId
+            });
         });
     });
 };

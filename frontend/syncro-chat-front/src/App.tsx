@@ -1,6 +1,7 @@
 // App.tsx
 import { useState, useEffect } from "react"
 import { Header } from "./components/Header"
+import { ToastProvider } from "./components/ToastProvider"
 import type { IUser } from "./types/user"
 import RoutesConfig from "./routes/Routes"
 import { useNavigate } from "react-router-dom"
@@ -88,6 +89,7 @@ function App() {
 
   return (
     <>
+      <ToastProvider />
       <Header
         user={user}
         onLoginSuccess={handleLoginSuccess}
