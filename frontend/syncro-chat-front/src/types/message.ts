@@ -4,4 +4,5 @@ export interface IMessage {
     user_name: string;
     content: string;
     timestamp: Date;
+    isOwnMessage?: boolean;
 }

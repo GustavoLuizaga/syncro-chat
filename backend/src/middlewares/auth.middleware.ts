@@ -16,9 +16,10 @@ declare global {
 export const authMiddleware = (req:Request,res:Response,next:NextFunction)=>{
     const token = req.headers.authorization?.split(" ")[1];
     if(!token){
-        return res.status(401).send({
+        return res.status(401).json({
             message:"token no encontrado",
-            status:401
+            status:401,
+            error:"No autorizado"
         });
     }
     try {
@@ -26,8 +27,12 @@ export const authMiddleware = (req:Request,res:Response,next:NextFunction)=>{
         req.user = payload;
         next();
     } catch (error) {
-        console.log(error);
-        res.status(401).json({error:"token invalido"});
+        console.log("error en auth middleware:", error);
+        return res.status(401).json({
+            message:"token invalido",
+            status:401,
+            error:"Autenticación fallida"
+        });
     }
 }
 

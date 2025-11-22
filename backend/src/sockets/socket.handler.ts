@@ -40,17 +40,20 @@ export const configurarSocketIO = (io: Server) => {
             try {
                 if (!socket.userId) return;
 
-                // verificar que el usuario sea miembro del chat
-                const participante = await prisma.chatParticipant.findFirst({
-                    where: {
-                        chatId: chatId,
-                        userId: socket.userId
-                    }
-                });
+                // Si es el chat global (ID 1), permitir acceso a todos
+                // Para otros chats, verificar que sea miembro
+                if (chatId !== 1) {
+                    const participante = await prisma.chatParticipant.findFirst({
+                        where: {
+                            chatId: chatId,
+                            userId: socket.userId
+                        }
+                    });
 
-                if (!participante) {
-                    socket.emit("error", { message: "no tienes acceso a este chat" });
-                    return;
+                    if (!participante) {
+                        socket.emit("error", { message: "no tienes acceso a este chat" });
+                        return;
+                    }
                 }
 
                 // unirse a la sala del chat

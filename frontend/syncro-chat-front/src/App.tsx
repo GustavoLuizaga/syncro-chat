@@ -1,5 +1,5 @@
 // App.tsx
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Header } from "./components/Header"
 import type { IUser } from "./types/user"
 import RoutesConfig from "./routes/Routes"
@@ -10,7 +10,27 @@ function App() {
 
   const navigate = useNavigate();
   const [user, setUser] = useState<IUser | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Cambiar a true para verificar sesión
+
+  // Restaurar sesión al cargar la aplicación
+  useEffect(() => {
+    const savedToken = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
+
+    if (savedToken && savedUser) {
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
+        console.log("✅ Sesión restaurada desde localStorage");
+      } catch (error) {
+        console.error("Error al restaurar sesión:", error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+    }
+    
+    setLoading(false);
+  }, []);
 
   // Función que envía el token de Google al backend
   const handleLoginSuccess = async (credentialResponse: CredentialResponse) => {
@@ -76,7 +96,7 @@ function App() {
       />
       <main className="pt-16">
         <div className="max-w-7xl w-full mx-auto px-4 lg:px-8">
-          <RoutesConfig />
+          <RoutesConfig user={user} isLoading={loading} />
         </div>
       </main>
     </>

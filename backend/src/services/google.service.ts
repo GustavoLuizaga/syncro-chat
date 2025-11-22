@@ -64,6 +64,25 @@ export const googleLoginFromToken = async (googleToken: string) => {
                 }
             });
             console.log("Usuario creado con Google (desde frontend):", user.email);
+            
+            // Crear o asignar el usuario al chat general (ID 1)
+            // Primero verificar si el chat existe
+            const defaultChat = await prisma.chat.findUnique({
+                where: { id: 1 }
+            });
+            
+            if (defaultChat) {
+                // Agregar el usuario como participante del chat general
+                await prisma.chatParticipant.create({
+                    data: {
+                        userId: user.id,
+                        chatId: 1
+                    }
+                }).catch((err) => {
+                    // Ignorar error si ya existe la relación
+                    console.log("El usuario ya está en el chat general o error:", err.message);
+                });
+            }
         } else {
             console.log("Usuario existente inició sesión con Google (desde frontend):", user.email);
         }
