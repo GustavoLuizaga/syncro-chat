@@ -11,7 +11,13 @@ export function ChatPage() {
             <section className="flex-1 overflow-y-auto">
                 <div className="max-w-7xl w-full mx-auto px-4 lg:px-8 py-4">
                     <p>historial de mensajes</p>
-                    <MessageBubble />
+                    <MessageBubble
+                    id_message="1"
+                    id_user="123" 
+                    user_name="Orlando Pollo"
+                    content="hola, este es un mensaje de prueba.hola, este es un mensaje de prueba.hola, este es un mensaje de prueba.hola, este es un mensaje de prueba."
+                    timestamp={new Date()}
+                    />
                 </div>
             </section>
 
