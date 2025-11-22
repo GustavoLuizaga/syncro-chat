@@ -5,52 +5,63 @@ import type { IUser } from "./types/user"
 import RoutesConfig from "./routes/Routes"
 import { useNavigate } from "react-router-dom"
 import type { CredentialResponse } from "@react-oauth/google"
-import { jwtDecode } from "jwt-decode"; // Para leer el token de Google aquí mismo
 
 function App() {
 
   const navigate = useNavigate();
   const [user, setUser] = useState<IUser | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  // ESTA FUNCIÓN SIMULA TODO EL PROCESO BACKEND
+  // Función que envía el token de Google al backend
   const handleLoginSuccess = async (credentialResponse: CredentialResponse) => {
     
     if (credentialResponse.credential) {
       const tokenGoogle = credentialResponse.credential;
-      console.log("1. Google nos dio acceso. Token:", tokenGoogle);
-
-      // --- INICIO SIMULACIÓN BACKEND ---
-      // Aquí normalmente harías: axios.post('http://localhost:3000/auth', { token })
+      console.log("1. Google nos autenticó. Enviando token al backend...");
       
-      console.log("2. Simulando envío al Backend (localhost:3000)...");
-      
-      // Decodificamos el token AQUÍ solo para simular que el backend nos devolvió los datos del usuario
-      const decoded: { name: string; email: string } = jwtDecode(tokenGoogle);
-      
-      // Simulamos un retraso de red de 1 segundo
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      setLoading(true);
+      try {
+        // Enviamos el token al backend
+        const response = await fetch("http://localhost:3000/api/auth/google/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            token: tokenGoogle
+          })
+        });
 
-      console.log("3. Backend simulado respondió 'OK'");
+        if (!response.ok) {
+          throw new Error("Error en la autenticación con Google");
+        }
 
-      // Datos simulados que "volverían" del backend
-      const simulatedUserFromBackend: IUser = {
-        id: "user_123_simulado", // ID que vendría de tu BD
-        name: decoded.name,      // Nombre real de tu cuenta Google
-        email: decoded.email     // Email real de tu cuenta Google
-      };
+        const data = await response.json();
+        console.log("2. Backend respondió:", data);
 
-      const simulatedAppToken = "mi_token_falso_para_sockets"; 
-      // --- FIN SIMULACIÓN ---
-
-      // 4. Guardamos y redirigimos
-      localStorage.setItem('token', simulatedAppToken);
-      setUser(simulatedUserFromBackend);
-      navigate("/chat"); // Asegúrate de tener esta ruta creada en RoutesConfig
+        // Guardamos el token y usuario en localStorage
+        localStorage.setItem('token', data.data.token);
+        localStorage.setItem('user', JSON.stringify(data.data.user));
+        
+        // Actualizamos el estado
+        setUser(data.data.user);
+        
+        console.log("3. Autenticación exitosa, redirigiendo a chat...");
+        // Redirigimos a la página de chat
+        navigate("/chat");
+        
+      } catch (error) {
+        console.error("Error en login con Google:", error);
+        alert("Error al iniciar sesión con Google");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
     navigate("/");
   };
@@ -59,8 +70,9 @@ function App() {
     <>
       <Header
         user={user}
-        onLoginSuccess={handleLoginSuccess} // Pasamos la nueva función
+        onLoginSuccess={handleLoginSuccess}
         onLogout={handleLogout}
+        isLoading={loading}
       />
       <main className="pt-16">
         <div className="max-w-7xl w-full mx-auto px-4 lg:px-8">

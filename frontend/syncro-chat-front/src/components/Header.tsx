@@ -8,9 +8,10 @@ interface HeaderProps {
     // 2. Actualizamos el tipo de la función onLogin
     onLoginSuccess: (credentialResponse: CredentialResponse) => void; 
     onLogout: () => void;
+    isLoading?: boolean;
 }
 
-export function Header({ user, onLoginSuccess, onLogout }: HeaderProps) {
+export function Header({ user, onLoginSuccess, onLogout, isLoading = false }: HeaderProps) {
     return (
         <header className="fixed top-0 left-0 w-full z-50 backdrop-blur-md shadow-xs h-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
@@ -30,14 +31,18 @@ export function Header({ user, onLoginSuccess, onLogout }: HeaderProps) {
                         </div>
                     ) : (
                         // 3. Reemplazamos tu botón negro por el de Google
-                        <div className="flex items-center">
-                             <GoogleLogin
-                                onSuccess={onLoginSuccess}
-                                onError={() => console.log('Login Failed')}
-                                theme="filled_black"
-                                shape="pill"
-                                text="signin_with"
-                            />
+                        <div className="flex items-center gap-4">
+                            {!isLoading ? (
+                                <GoogleLogin
+                                    onSuccess={onLoginSuccess}
+                                    onError={() => console.log('Login Failed')}
+                                    theme="filled_black"
+                                    shape="pill"
+                                    text="signin_with"
+                                />
+                            ) : (
+                                <div className="text-sm text-gray-500">Autenticando...</div>
+                            )}
                         </div>
                     )}
                 </nav>
