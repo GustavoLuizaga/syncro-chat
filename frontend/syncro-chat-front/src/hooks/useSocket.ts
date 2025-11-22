@@ -220,6 +220,20 @@ export function useSocket({ token }: UseSocketProps) {
         };
     }, []);
 
+    // Listener para usuario se unió al chat (evento de conexión)
+    const onUserConnected = useCallback((callback: (data: { username: string; userId: number }) => void) => {
+        if (socketRef.current) {
+            socketRef.current.on("user_connected", callback);
+        }
+    }, []);
+
+    // Listener para usuario se desconectó del chat (evento de desconexión)
+    const onUserDisconnected = useCallback((callback: (data: { username: string; userId: number }) => void) => {
+        if (socketRef.current) {
+            socketRef.current.on("user_disconnected", callback);
+        }
+    }, []);
+
     return {
         joinChat,
         leaveChat,
@@ -233,6 +247,8 @@ export function useSocket({ token }: UseSocketProps) {
         onError,
         onUserJoined,
         onUserLeft,
+        onUserConnected,
+        onUserDisconnected,
         isConnected
     };
 }

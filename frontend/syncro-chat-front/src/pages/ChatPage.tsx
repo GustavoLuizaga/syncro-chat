@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { MessageBubble } from "../components/MessageBubble";
 import { useSocket } from "../hooks/useSocket";
+import { toast } from "sonner";
 
 interface Message {
     id: number;
@@ -46,6 +47,8 @@ export function ChatPage() {
         onMessagesLoaded,
         onUserTyping,
         onError,
+        onUserConnected,
+        onUserDisconnected,
         isConnected
     } = useSocket({ token });
 
@@ -114,6 +117,20 @@ export function ChatPage() {
         });
         return unsubscribe;
     }, [onError]);
+
+    // Listener para usuario conectado
+    useEffect(() => {
+        onUserConnected((data) => {
+            toast.success(`${data.username} se unió al chat 👋`);
+        });
+    }, [onUserConnected]);
+
+    // Listener para usuario desconectado
+    useEffect(() => {
+        onUserDisconnected((data) => {
+            toast.info(`${data.username} salió del chat 👋`);
+        });
+    }, [onUserDisconnected]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMessageInput(e.target.value);
