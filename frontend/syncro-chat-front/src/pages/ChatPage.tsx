@@ -14,7 +14,7 @@ export function ChatPage() {
                     <MessageBubble
                     id_message="1"
                     id_user="123" 
-                    user_name="Orlando Pollo"
+                    user_name="Gustavo Pollo"
                     content="hola, este es un mensaje de prueba.hola, este es un mensaje de prueba.hola, este es un mensaje de prueba.hola, este es un mensaje de prueba."
                     timestamp={new Date()}
                     />

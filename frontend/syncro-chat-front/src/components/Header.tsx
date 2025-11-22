@@ -1,6 +1,16 @@
+// components/Header.tsx
 import type { IUser } from "../types/user";
+// 1. Importar componentes de Google
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 
-export function Header({ user, onLogin, onLogout }: { user: IUser | null; onLogin?: () => void; onLogout?: () => void }) {
+interface HeaderProps {
+    user: IUser | null;
+    // 2. Actualizamos el tipo de la función onLogin
+    onLoginSuccess: (credentialResponse: CredentialResponse) => void; 
+    onLogout: () => void;
+}
+
+export function Header({ user, onLoginSuccess, onLogout }: HeaderProps) {
     return (
         <header className="fixed top-0 left-0 w-full z-50 backdrop-blur-md shadow-xs h-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
@@ -12,24 +22,26 @@ export function Header({ user, onLogin, onLogout }: { user: IUser | null; onLogi
                         <div className="flex items-center gap-4">
                             <span className="text-sm font-medium">{user.name}</span>
                             <button
-                                className="px-3 py-1 rounded-md border"
-                                aria-label="Cerrar sesión"
+                                className="px-3 py-1 rounded-md border hover:bg-gray-100 cursor-pointer"
                                 onClick={onLogout}
                             >
                                 Salir
                             </button>
                         </div>
                     ) : (
-                        <button
-                            className="bg-[#1a1a1a] px-4 py-2 rounded-md text-white hover:bg-[#333333] transition"
-                            onClick={onLogin}
-                        >
-                            Login
-                        </button>
+                        // 3. Reemplazamos tu botón negro por el de Google
+                        <div className="flex items-center">
+                             <GoogleLogin
+                                onSuccess={onLoginSuccess}
+                                onError={() => console.log('Login Failed')}
+                                theme="filled_black"
+                                shape="pill"
+                                text="signin_with"
+                            />
+                        </div>
                     )}
                 </nav>
             </div>
-
         </header>
     );
 }
