@@ -176,13 +176,8 @@ export function ChatPage() {
 
     return (
         <div className="fixed inset-x-0 top-16 bottom-0 flex flex-col">
-            {/* Header del Chat */}
-            <div className="bg-white border-b px-4 py-3">
-                <h2 className="font-semibold text-gray-800">Chat #{chatId}</h2>
-                <p className="text-sm text-gray-500">
-                    {isConnected ? "🟢 Conectado" : "🔴 Desconectado"}
-                </p>
-            </div>
+
+
 
             {/* Mensajes */}
             <section className="flex-1 overflow-y-auto">
@@ -228,7 +223,7 @@ export function ChatPage() {
             </section>
 
             {/* Input de mensaje */}
-            <footer className="bg-white border-t">
+            <footer>
                 <div className="max-w-7xl w-full mx-auto px-4 lg:px-8 py-4">
                     <form onSubmit={handleSubmit} className="flex gap-2">
                         <input
@@ -236,15 +231,19 @@ export function ChatPage() {
                             placeholder="Escribe un mensaje..."
                             value={messageInput}
                             onChange={handleInputChange}
-                            className="flex-1 border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800"
+                            className="flex-1 border rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-800"
                         />
-                        <button
-                            type="submit"
-                            disabled={!messageInput.trim()}
-                            className="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                        >
-                            Enviar
-                        </button>
+                                    <button
+                                        type="submit"
+                                        aria-label="Enviar mensaje"
+                                        disabled={!messageInput.trim()}
+                                        className="w-12 h-12 inline-flex items-center justify-center bg-[#1a1a1a] text-white rounded-full hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition"
+                                    >
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                                            <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" fill="currentColor" />
+                                        </svg>
+                                        <span className="sr-only">Enviar</span>
+                                    </button>
                     </form>
                 </div>
             </footer>

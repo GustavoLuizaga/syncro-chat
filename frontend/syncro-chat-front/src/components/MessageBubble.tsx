@@ -27,12 +27,12 @@ export function MessageBubble({ user_name, content, timestamp, isOwnMessage = fa
         <div className={`flex items-start gap-2.5 ${isOwnMessage ? 'flex-row-reverse' : ''}`}>
             
             {/* Avatar */}
-            <div className={`w-10 h-10 sm:w-12 sm:h-12 ${isOwnMessage ? 'bg-blue-500' : 'bg-[#1a1a1a]'} rounded-full flex items-center justify-center text-white font-semibold text-xs sm:text-sm shrink-0`}>
+            <div className={`w-10 h-10 sm:w-12 sm:h-12 ${isOwnMessage ? 'bg-[#1a1a1a]' : 'bg-gray-400'} rounded-full flex items-center justify-center text-white font-semibold text-xs sm:text-sm shrink-0`}>
                 {getInitials(user_name)}
             </div>
 
             {/* Burbuja con cola */}
-            <div className={`relative flex flex-col w-full max-w-[320px] leading-1.5 p-4 ${isOwnMessage ? 'bg-blue-100 rounded-lg rounded-br-none' : 'bg-gray-100 rounded-lg'}`}>
+            <div className={`relative flex flex-col w-full max-w-[320px] leading-1.5 p-4 ${isOwnMessage ? 'bg-[#1a1a1a] text-white rounded-lg rounded-br-none' : 'bg-gray-100 text-gray-800 rounded-lg'}`}>
 
                 {/* COLA más grande */}
                 {!isOwnMessage && (
@@ -49,21 +49,21 @@ export function MessageBubble({ user_name, content, timestamp, isOwnMessage = fa
                         className="absolute -right-2 top-4 w-0 h-0
                             border-t-12px border-t-transparent
                             border-b-12px border-b-transparent
-                            border-l-12px border-l-blue-100">
+                            border-l-12px border-l-[#1a1a1a]">
                     </div>
                 )}
 
                 {/* Encabezado */}
                 <div className="flex items-center space-x-1.5 rtl:space-x-reverse">
-                    <span className={`text-sm font-semibold ${isOwnMessage ? 'text-blue-700' : 'text-slate-800'}`}>
+                    <span className={`text-sm font-semibold ${isOwnMessage ? 'text-white' : 'text-slate-800'}`}>
                         {user_name}
                     </span>
-                    <time className={`text-sm ${isOwnMessage ? 'text-blue-600' : 'text-gray-500'}`} dateTime={date.toISOString()}>
+                    <time className={`text-sm ${isOwnMessage ? 'text-gray-300' : 'text-gray-500'}`} dateTime={date.toISOString()}>
                         {time}
                     </time>
                 </div>
 
-                <p className={`text-sm py-2.5 ${isOwnMessage ? 'text-blue-900' : 'text-gray-700'}`}>{content}</p>
+                <p className={`text-sm py-2.5 ${isOwnMessage ? 'text-white' : 'text-gray-700'}`}>{content}</p>
             </div>
         </div>
     );
