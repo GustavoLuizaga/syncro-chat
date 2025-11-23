@@ -14,6 +14,12 @@ export function Header({ user, onLoginSuccess, onLogout, isLoading = false }: He
     const navigate = useNavigate();
 
     const handleLogout = () => {
+        // marcar logout intencional para que el ChatPage emita el evento "leave_chat"
+        try {
+            localStorage.setItem('isLoggingOut', '1');
+        } catch {
+            // si localStorage no está disponible, seguimos de todos modos
+        }
         onLogout();
         navigate('/');
     };
